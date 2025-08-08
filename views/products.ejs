@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Products</title>
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="products.css">
+</head>
+<body>
+ <header>
+    <div class="nav-left">
+      <img src="/images/logo.svg" class="logo">
+      <a href="/index">Home</a>
+      <a href="/products">Products</a>
+      <a href="/faq">FAQ</a>
+    </div>
+    <div class="search-container">
+      <input type="text" placeholder="Search for Item" id="searchInput">
+      <img src="search-icon.svg">
+    </div>
+    <div class="nav-right">
+      <a href="/cart" class="btn">Cart</a>
+      <a href="/login" class="btn">Log out</a>
+    </div>
+  </header>
+
+<div class="products-grid">
+  <% if (products && products.length > 0) { %>
+    <% products.forEach(product => { %>
+  <div class="product-item">
+    <form action="/addtocart" method="POST">
+      <div class="product-main-body" id="product-<%= product.id %>" data-name="<%= product.name %>">
+        <div class="stock-container">
+        </div>
+        <div id="image-container">
+          <img src="/images/<%= product.name%>.jpg" alt="<%= product.name %>" class="product-image">
+        </div>
+        <div class="product-name"><%= product.name %></div>
+        <div class="product-description"><%= product.description %>
+        </div>
+        <div class="product-price-and-quantity">
+          <div class="product-price-container">
+
+            <div><span class="product-price" id="priceDisplay-<%= product.id %>">₹<%= product.price %>     </span><span class="light-text">  <%= product.qty %></span></div>
+          </div>
+          <div class="product-quantity">
+            <button type="button" class="decrease" data-id="<%= product.id %>">-</button>
+            <span class="quantity" id="quantity-<%= product.id %>">1</span>
+            <button type="button" class="increase" data-id="<%= product.id %>">+</button>
+          </div>
+        </div>
+          <div class="fade-text">Stock: <span class="stock fade-text"><%= product.stock %></span></div>
+        <div class="expiry fade-text"><%= product.expiry %></div>
+        <input type="hidden" name="productId" value="<%= product.id %>">
+        <input type="hidden" name="quantity" id="quantityInput-<%= product.id %>" value="1">
+        <div class="add-to-cart-button">
+          <button type="submit" name="addtocart">Add to Cart</button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+  <% }) %>
+  <% } %>
+</div>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const productItems = document.querySelectorAll(".product-main-body");
+
+
+    const searchInput = document.getElementById("searchInput");
+    searchInput.addEventListener("input", () => {
+      const query = searchInput.value.toLowerCase().trim();
+      productItems.forEach(item => {
+        const name = item.getAttribute("data-name").toLowerCase();
+        // The parent of product-main-body is product-item, which we hide/show
+        item.parentElement.style.display = name.includes(query) ? "block" : "none";
+      });
+    });
+
+    // Quantity logic is now applied to each dynamically generated product
+    productItems.forEach(product => {
+      const productId = product.id.split('-')[1]; // Extracts ID from 'product-1'
+      const stock = parseInt(product.querySelector(".stock").innerText);
+      
+      const quantityDisplay = document.getElementById(`quantity-${productId}`);
+      const quantityInput = document.getElementById(`quantityInput-${productId}`);
+      
+      const increaseBtn = product.querySelector(".increase");
+      const decreaseBtn = product.querySelector(".decrease");
+
+      increaseBtn.addEventListener("click", () => {
+        let quantity = parseInt(quantityDisplay.innerText);
+        if (quantity < stock) {
+          quantity++;
+          quantityDisplay.innerText = quantity;
+          quantityInput.value = quantity;
+        } else {
+          alert(`Only ${stock} items available in stock.`);
+        }
+      });
+
+      decreaseBtn.addEventListener("click", () => {
+        let quantity = parseInt(quantityDisplay.innerText);
+        if (quantity > 1) {
+          quantity--;
+          quantityDisplay.innerText = quantity;
+          quantityInput.value = quantity;
+        }
+      });
+    });
+  });
+  </script>
+</body>
+</html>

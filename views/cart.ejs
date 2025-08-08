@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Cart</title>
+  <link rel="stylesheet" href="/cart.css">
+  <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+  <header>
+    <div class="nav-left">
+      <img src="/images/logo.svg" class="logo">
+      <a href="/index">Home</a>
+      <a href="/products">Products</a>
+      <a href="/faq">FAQ</a>
+    </div>
+    
+    <div class="nav-right">
+      <a href="/cart" class="btn">Cart</a>
+      <a href="/login" class="btn">Log out</a>
+    </div>
+  </header>
+
+  <h2>Your Cart</h2>
+
+  <% if (error) { %>
+    <div class="error-message" style="color: red; text-align: center; margin-bottom: 15px;"><%= error %></div>
+  <% } %>
+
+  <% if (p.length > 0) { %>
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Price (₹)</th>
+          <th>Quantity</th>
+          <th>Total (₹)</th>
+          <th>Action</th> </tr>
+      </thead>
+      <tbody>
+        <% 
+          let grandTotal = 0;
+          let totalQuantity = 0;
+          p.forEach(product => {
+            const total = product.price * product.quantity;
+            grandTotal += total;
+            totalQuantity += product.quantity;
+        %>
+          <tr>
+            <td><%= product.name %></td>
+            <td>₹<%= product.price %></td>
+            <td><%= product.quantity %></td>
+            <td>₹<%= total %></td>
+            <td>
+              <form action="/remove-from-cart" method="POST" style="display:inline;">
+                <input type="hidden" name="productId" value="<%= product.product_id %>">
+                <button type="submit" class="remove-button">Remove</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+        <tr class="total-row">
+          <td colspan="2">Grand Total</td>
+          <td><%= totalQuantity %></td>
+          <td>₹<%= grandTotal %></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="buy-all-container" style="text-align: center; margin-top: 20px;">
+      <form action="/buy-all" method="POST">
+        <button type="submit" class="buy-all-button">Buy All Items</button>
+      </form>
+    </div>
+
+  <% } else { %>
+    <div class="empty">Your cart is empty.</div>
+  <% } %>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Products</title>
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="products.css">
+</head>
+<body>
+  <header>
+    <div class="nav-left">
+      <a href="/index">Home</a>
+      <a href="/products">Products</a>
+      <a href="/faq">FAQ</a>
+    </div>
+    <div class="search-container">
+      <input type="text" placeholder="Search for Item" id="searchInput">
+      <img src="search-icon.svg">
+    </div>
+    <a href="/cart" class="cart-button" title="View Cart">
+      <img src="shoppingcart.svg" alt="Cart">
+    </a>
+  </header>
+
+<div class="products-grid">
+  <div class="product-item">
+    <form action="/addtocart" method="POST">
+      <div class="product-main-body" id="product-apples" data-name="Apples">
+        <div class="stock-container">
+          <div>Stock: <span class="stock">10</span></div>
+        </div>
+        <div>
+          <img src="" alt="Apples" class="product-image">
+        </div>
+        <div class="expiry">08 August</div>
+        <div class="product-name">Apples</div>
+        <div class="product-description">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat deserunt fugit quasi vel iure aperiam hic consequatur. Repellendus suscipit fuga nemo reprehenderit odit tempore. Modi ipsa quam consequuntur sint nesciunt!
+        </div>
+        <div class="product-price-and-quantity">
+          <div class="product-price-container">
+            <div>Rs. <span class="product-price" id="priceDisplay-apples">₹120</span></div>
+          </div>
+          <div class="product-quantity">
+            <button type="button" class="decrease" data-id="apples">-</button>
+            <span class="quantity" id="quantity-apples">1</span>
+            <button type="button" class="increase" data-id="apples">+</button>
+          </div>
+        </div>
+        <input type="hidden" name="productId" value="apples">
+        <input type="hidden" name="quantity" id="quantityInput-apples" value="1">
+        <div class="add-to-cart-button">
+          <button type="submit" name="addtocart">Add to Cart</button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // MODIFIED: The script now targets the dynamic product cards
+    const productItems = document.querySelectorAll(".product-main-body");
+
+    // Search functionality remains the same but works on dynamic content
+    const searchInput = document.getElementById("searchInput");
+    searchInput.addEventListener("input", () => {
+      const query = searchInput.value.toLowerCase().trim();
+      productItems.forEach(item => {
+        const name = item.getAttribute("data-name").toLowerCase();
+        // The parent of product-main-body is product-item, which we hide/show
+        item.parentElement.style.display = name.includes(query) ? "block" : "none";
+      });
+    });
+
+    // Quantity logic is now applied to each dynamically generated product
+    productItems.forEach(product => {
+      const productId = product.id.split('-')[1]; // Extracts ID from 'product-1'
+      const stock = parseInt(product.querySelector(".stock").innerText);
+      
+      const quantityDisplay = document.getElementById(`quantity-${productId}`);
+      const quantityInput = document.getElementById(`quantityInput-${productId}`);
+      
+      const increaseBtn = product.querySelector(".increase");
+      const decreaseBtn = product.querySelector(".decrease");
+
+      increaseBtn.addEventListener("click", () => {
+        let quantity = parseInt(quantityDisplay.innerText);
+        if (quantity < stock) {
+          quantity++;
+          quantityDisplay.innerText = quantity;
+          quantityInput.value = quantity;
+        } else {
+          alert(`Only ${stock} items available in stock.`);
+        }
+      });
+
+      decreaseBtn.addEventListener("click", () => {
+        let quantity = parseInt(quantityDisplay.innerText);
+        if (quantity > 1) {
+          quantity--;
+          quantityDisplay.innerText = quantity;
+          quantityInput.value = quantity;
+        }
+      });
+    });
+  });
+  </script>
+</body>
+</html>
